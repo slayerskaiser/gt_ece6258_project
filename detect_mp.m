@@ -4,9 +4,11 @@
 function MP = detect_mp(frames,alpha)
 % Moving average detection algorithm
 
+% size of frames
 [N,M,nFrames] = size(frames);
 % moving pixels
 MP = false(N,M,nFrames-1);
+
 % use first frame as initial background
 CB = frames(:,:,1);
 % get moving pixels and update background

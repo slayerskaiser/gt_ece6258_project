@@ -1,0 +1,68 @@
+% ECE 6258 Project
+% Klaus Okkelberg and Mengmeng Du
+
+function MP = detect_ap(frames,Kmax,Nsetmax,cf)
+% Adaptive Gaussian Mixture Model (Adaptive GMM)
+
+% size of frames
+[N,M,nFrames] = size(frames);
+% moving pixels
+MP = false(N,M,nFrames-1);
+
+% parameters
+alpha = 1/(N*M); % weight so sum(pi_m) = 1
+pi_ks = zeros(N*M,Kmax);
+mu_ks = zeros(N*M,Kmax);
+var_ks = zeros(N*M,Kmax);
+var_0 = (0.1*256)^2; % 10% change
+Xset = zeros(N*M,Nsetmax);
+
+% initialize parameters using first frame (first component)
+K = ones(N*M,1); % number of current GMM components
+Nset = 1; % number of frames in set
+Xset(:,1) = reshape(frames(:,:,1),[],1);
+pi_ks(:,1) = alpha;
+mu_ks(:,1) = Xset(:,1);
+var_ks(:,1) = var_0;
+
+% get moving pixels while updating GMM
+for n = 2:nFrames
+    % add new frame to set, dropping oldest if at capacity
+    if Nset < Nsetmax
+        Nset = Nset + 1;
+    end
+    Xset = [reshape(frames(:,:,n),[],1) Xset(:,1:end-1)];
+    
+    for npixel = 1:N*M
+        o_k = zeros(Kmax,1);
+        % get squared distance normalized by variance and check closeness
+        delta_k = bsxfun(@minus, Xset(npixel,1:Nset).', ...
+            mu_ks(npixel,1:K(npixel)));
+        isClose = sum(delta_k.^2) ./ var_ks(npixel,1:K(npixel)) < 9;
+        indClose = find(isClose);
+        % if there are any close, find component with largest pi_k
+        if ~isempty(indClose)
+            [~,idx] = max(pi_ks(npixel,indClose));
+            o_k(indClose(idx)) = 1;
+        else % add new component if none close
+            % discard component if smallest pi_k if at max components
+            if K(npixel) == Kmax
+                K(npixel) = Kmax - 1;
+                [~,idx] = min(pi_ks(npixel,:));
+                pi_ks(npixel,:) = [pi_ks(npixel,setdiff(1:Kmax,idx)) 0];
+                mu_ks(npixel,:) = [mu_ks(npixel,setdiff(1:Kmax,idx)) 0];
+                var_ks(npixel,:) = [var_ks(npixel,setdiff(1:Kmax,idx)) 0];
+            end
+            K(npixel) = K(npixel) + 1;
+            o_k(K(npixel)) = 1;
+            % update delta_k with new components
+            delta_k = bsxfun(@minus, Xset(npixel,1:Nset).', ...
+                mu_ks(npixel,1:K(npixel)));
+        end
+        % update model with determined ownership
+        pi_ks(npixel,:) = (1-alpha)*pi_ks(npixel,:) + alpha*o_k.';
+        mu_ks(npixel,:) = mu_ks(npixel,:) ...
+            + o_k.' .* (alpha/pi_ks(npixel,:)) 
+    end
+    
+end

@@ -1,0 +1,48 @@
+% ECE 6258 Project
+% Klaus Okkelberg and Mengmeng Du
+
+function MP = detect_ap(frames,Kmax,cf)
+% Adaptive Gaussian Mixture Model (Adaptive GMM)
+
+% size of frames
+[N,M,nFrames] = size(frames);
+% moving pixels
+MP = false(N,M,nFrames-1);
+
+% parameters
+alpha = 1/(N*M); % weight so sum(pi_m) = 1
+pi_m = zeros(N*M,Kmax);
+mu_m = zeros(N*M,Kmax);
+var_m = zeros(N*M,Kmax);
+var_0 = (0.1*256)^2; % 10% change
+
+% estimate variance from first frame
+% var_0 = std2(frames(:,:,1))^2;
+
+% initialize parameters using first frame (first component)
+K = 1; % number of current GMM components
+pi_m(:,K) = alpha;
+mu_m(:,K) = reshape(frames(:,:,1),[],1);
+var_m(K) = var_0;
+
+% get moving pixels while updating GMM
+for n = 2:nFrames
+    % check for close components
+    %
+    % get squared distance normalized by variance
+    delta_m = bsxfun(@minus, reshape(frames(:,:,n),[],1), mu_m(:,1:K));
+    D2 = diag(delta_m.'*delta_m) ./ var_m(1:K);
+    % find "close" components, i.e. min dist < 3 stds (= 9 var)
+    ind_close = find(D2 < 9);
+    if ~isempty(ind_close) % determine ownership from existing components
+        sub_pimax = max(pi_m(:,ind_close),[],2);
+        ind_pimax = sub2ind([N*M Kmax],1:N*M,sub_pimax);
+        o_m = false(N*M,Kmax);
+        o_m(ind_pimax) = 1;
+    else % no close components, so add additional one
+        if K == Kmax % if at max components, discard one with smallest pi_m
+            K = K - 1; % discarding component
+            [~,ind_pimin] = min(sum(pi_m));
+        end
+    end
+end
