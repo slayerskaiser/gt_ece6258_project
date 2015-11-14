@@ -1,7 +1,7 @@
 % ECE 6258 Project
 % Klaus Okkelberg and Mengmeng Du
 
-function MP = detect_ap(frames,Kmax,std_0)
+function MP = detect_nap(frames,Kmax,std_0)
 % Non-adaptive Gaussian Mixture Model (GMM)
 
 % size of frames
@@ -25,6 +25,7 @@ mu_ks(:,1) = reshape(frames(:,:,1),[],1);
 var_ks(:,1) = var_0;
 % owner is first component
 o_ks = ones(N*M,1);
+o_mat = zeros(N*M,Kmax); % matrix form
 % set initial background as first frame
 CB = mu_ks(:,1);
 
@@ -43,41 +44,25 @@ for n = 2:nFrames
     delta_ks = bsxfun(@minus,curFrame,mu_ks);
     dist2 = delta_ks.^2;
     % close if normalized variance less than 3^2
-    isClose = bsxfun(@rdivide,dist2,var_ks) < 9;
+    isClose = dist2./var_ks < 9;
     
     % for close components, owner is one with largest pi_k
     anyClose = any(isClose,2);
-    indClose = find(anyClose);
     pi_masked = pi_ks.*isClose;
-    [~,o_ks(indClose)] = max(pi_masked(indClose,:),[],2);
+    [~,o_ks(anyClose)] = max(pi_masked(anyClose,:),[],2);
     % for far components, add new component
-    indFar = find(~anyClose);
-    indKAtMax = K(indFar)==Kmax;
-    indNotMax = indFar(~indKAtMax);
+    indNotMax = ~anyClose & K~=Kmax;
     K(indNotMax) = K(indNotMax) + 1;
     o_ks(indNotMax) = K(indNotMax);
-    indAtMax = indFar(indKAtMax);
+    indAtMax = ~anyClose & K==Kmax;
     [~,idxs] = min(pi_ks(indAtMax,:),[],2);
-    indsNewComp = sub2ind([N*M Kmax],indAtMax,idxs);
+    indsNewComp = sub2ind([N*M Kmax],find(indAtMax),idxs);
     o_ks(indAtMax) = idxs;
     pi_ks(indsNewComp) = alpha;
     mu_ks(indsNewComp) = curFrame(indAtMax);
     var_ks(indsNewComp) = var_0;
-%     for k = indFar
-%         % remove one with smallest pi_k if at max components
-%         if K(k) == Kmax
-%             [~,idx] = min(pi_ks(k,:));
-%             o_ks(k) = idx;
-%             pi_ks(k,idx) = alpha;
-%             mu_ks(k,idx) = curFrame(k);
-%             var_ks(k,idx) = var_0;
-%         else
-%             K(k) = K(k) + 1;
-%             o_ks(k) = K(k);
-%         end
-%     end
     % create ownership matrix
-    o_mat = zeros(N*M,Kmax);
+    o_mat(:) = 0;
     indOwn = sub2ind([N*M Kmax],(1:N*M).',o_ks);
     o_mat(indOwn) = 1;
     

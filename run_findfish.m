@@ -21,7 +21,7 @@ end
 % Moving average detection algorithm
 MP = detect_mp(cat(3,s(:).cdata),0.5);
 % Non-adaptive Gaussian mixture model
-AP = detect_ap(cat(3,s(:).cdata),4,0.05);
+AP = detect_nap(cat(3,s(:).cdata),4,0.1);
 
 %% Find features
 %  pts = detectSURFFeatures(s(1).cdata);
