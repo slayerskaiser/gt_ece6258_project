@@ -21,7 +21,7 @@ var_0 = std_0^2;
 % initialize parameters using first frame (first component)
 K = ones(N*M,1); % number of current GMM components
 pi_ks(:,1) = alpha;
-mu_ks(:,1) = reshape(frames(:,:,1),[],1);
+mu_ks(:,1) = im2double(reshape(frames(:,:,1),[],1));
 var_ks(:,1) = var_0;
 % owner is first component
 o_ks = ones(N*M,1);

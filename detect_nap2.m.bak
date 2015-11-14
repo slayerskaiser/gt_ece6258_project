@@ -1,0 +1,79 @@
+% ECE 6258 Project
+% Klaus Okkelberg and Mengmeng Du
+
+function MP = detect_nap2(frames,Kmax,std_0)
+% Non-adaptive Gaussian Mixture Model (GMM)
+% uses cells for easy conversion to adaptive GMM
+
+% size of frames
+[N,M,nFrames] = size(frames);
+% moving pixels
+MP = false(N*M,nFrames-1);
+
+% parameters
+alpha = 1;
+var_0 = std_0^2;
+pi_ks = num2cell(alpha*ones(N*M,1));
+% initialize average as first frame
+mu_ks = num2cell(reshape(frames(:,:,1),[],1));
+var_ks = num2cell(var_0*ones(N*M,1));
+% owner is first component
+o_ks = ones(N*M,1);
+% set initial background as first frame
+CB = reshape(frames(:,:,1),[],1);
+
+tic
+% get moving pixels while updating GMM
+for n = 2:nFrames
+    fprintf('Starting frame %d, t=%f\n',n,toc)
+    % current frame
+    curFrame = im2double(reshape(frames(:,:,n),[],1));
+    
+    % moving pixels
+    dif = abs(CB - curFrame);
+    MP(:,n-1) = dif > graythresh(dif);
+    
+    % get squared distance normalized by variance and check closeness
+    delta_ks = cellfun( ...
+        @(mu) bsxfun(@minus, num2cell(curFrame), mu), ...
+        mu_ks, 'uni', 0);
+    dist2 = cellfun(@(delta) delta.^2, delta_ks, 'uni', 0);
+    % close if normalized variance less than 3^2
+    isClose = cellfun(@(d2,var) d2./var < 9, dist2, var_ks, 'uni', 0);
+    
+    % for close components, owner is one with largest pi_k
+    anyClose = cellfun(@(x) any(x), isClose);
+    [~,o_ks(anyClose)] = cellfun(@(pi_k) max(pi_k), pi_ks(anyClose));
+%     pi_masked = pi_ks.*isClose;
+%     [~,o_ks(indClose)] = max(pi_masked(indClose,:),[],2);
+    % for far components, add new component
+    Ks = cellfun(@(pi_k) length(pi_k), pi_ks(~anyClose));
+    
+%     indFar = find(~anyClose);
+%     indKAtMax = K(indFar)==Kmax;
+%     indNotMax = indFar(~indKAtMax);
+%     K(indNotMax) = K(indNotMax) + 1;
+%     o_ks(indNotMax) = K(indNotMax);
+%     indAtMax = indFar(indKAtMax);
+%     [~,idxs] = min(pi_ks(indAtMax,:),[],2);
+%     indsNewComp = sub2ind([N*M Kmax],indAtMax,idxs);
+%     o_ks(indAtMax) = idxs;
+%     pi_ks(indsNewComp) = alpha;
+%     mu_ks(indsNewComp) = curFrame(indAtMax);
+%     var_ks(indsNewComp) = var_0;
+    % create ownership matrix
+%     o_mat = zeros(N*M,Kmax);
+%     indOwn = sub2ind([N*M Kmax],(1:N*M).',o_ks);
+%     o_mat(indOwn) = 1;
+    
+    % update model parameters using ownership
+%     pi_ks = (1-alpha)*pi_ks + alpha*o_mat;
+%     mu_ks = mu_ks + o_mat .* (alpha./pi_ks) .* delta_ks;
+%     mu_ks(isnan(mu_ks)) = 0;
+%     var_ks = var_ks + o_mat .* (alpha./pi_ks) .* (dist2-var_ks);
+    
+    % determine background
+%     CB = sum(pi_ks.*mu_ks,2);
+end
+
+MP = reshape(MP,N,M,nFrames-1);
