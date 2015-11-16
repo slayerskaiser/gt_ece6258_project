@@ -10,10 +10,13 @@ function MP = detect_mp(frames,alpha)
 MP = false(N,M,nFrames-1);
 
 % use first frame as initial background
-CB = frames(:,:,1);
+CB = im2double(frames(:,:,1));
 % get moving pixels and update background
 for n = 2:nFrames
-    dif = abs(CB - frames(:,:,n));
-    MP(:,:,n-1) = ( dif > 255*graythresh(dif) );
-    CB = (1-alpha)*CB + alpha*frames(:,:,n);
+    fprintf('Starting frame %d, t=%f\n',n,toc)
+    curFrame = im2double(frames(:,:,n));
+    CB = stabalize(CB,curFrame);
+    dif = abs(CB - curFrame);
+    MP(:,:,n-1) = ( dif > graythresh(dif) );
+    CB = (1-alpha)*CB + alpha*curFrame;
 end

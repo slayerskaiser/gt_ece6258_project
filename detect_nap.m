@@ -29,13 +29,13 @@ o_mat = zeros(N*M,Kmax); % matrix form
 % set initial background as first frame
 CB = mu_ks(:,1);
 
-tic
 % get moving pixels while updating GMM
 for n = 2:nFrames
     fprintf('Starting frame %d, t=%f\n',n,toc)
     % current frame
     curFrame = im2double(reshape(frames(:,:,n),[],1));
-    
+    % stabalize background
+    CB = stabalize(CB,curFrame,N,M);
     % moving pixels
     dif = abs(CB - curFrame);
     MP(:,n-1) = dif > graythresh(dif);
