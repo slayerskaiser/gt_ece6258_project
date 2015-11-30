@@ -11,3 +11,9 @@ The main steps for implementing this project are
   - Detection of moving fish
   - Detection of non-moving fish and tracking
   - Recognition of fish
+
+The following videos are being considered for this project:
+  - GOPR0073
+  - GOPR0062
+  - GOPR0063
+  - GOPR0059

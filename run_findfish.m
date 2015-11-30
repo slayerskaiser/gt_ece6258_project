@@ -6,33 +6,15 @@ close all
 tic
 
 %% Read frames in file
-% look into: vision.VideoFileReader
-vidObj = VideoReader('GOPR0073.avi');
+%%% look into: vision.VideoFileReader
+vidObj = VideoReader('videos\GOPR0073.MP4');
 % nFrames = vidObj.NumberOfFrames;
-nFrames = 10;
-vidHeight = vidObj.Height;
-vidWidth = vidObj.Width;
-s(1:nFrames) = struct('cdata',zeros(vidHeight,vidWidth,1,'uint8'),...
-    'colormap',[]);
-% s(1:nFrames) = struct('cdata',zeros(vidHeight,vidWidth,3,'uint8'),...
-%     'colormap',[]);
-for k = 1:nFrames
-    s(k).cdata = lens_correct(read(vidObj,k));
-%     s(k).cdata = colorcorrect_uw(read(vidObj,k));
-%     s(k).cdata = rgb2gray(read(vidObj,k));
-%     s(k).cdata = read(vidObj,k);
-end
+nFrames = 20;
 
 %% Moving pixel detection
 % Moving average detection algorithm
-MP = detect_mp(cat(3,s(:).cdata),0.8);
+MP = detect_mp2(vidObj,nFrames,0.8);
 % Non-adaptive Gaussian mixture model
-% AP = detect_nap(cat(3,s(:).cdata),8,0.1);
-% cell-format test
-% AP2 = detect_nap2(cat(3,s(1:2).cdata),4,0.1);
-
-%% Find features
-%  pts = detectSURFFeatures(s(1).cdata);
 
 %% Play video
 % hf = figure;

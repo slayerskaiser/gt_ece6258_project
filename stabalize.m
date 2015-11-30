@@ -1,12 +1,13 @@
 % ECE 6258 Project
 % Klaus Okkelberg and Mengmeng Du
 
-function oldFrame_stabalized = stabalize(oldFrame,curFrame,varargin)
+function oldFrame_stabalized = stabalize(oldFrame_aug,curFrame_aug,varargin)
 % given current and and old frames, returns old frame that has been
 % transformed so its background matches that of the current
 
-% allocate stabalized frame
-oldFrame_stabalized = oldFrame;
+% remove augmentation from input frames
+oldFrame = oldFrame_aug(:,:,1);
+curFrame = curFrame_aug(:,:,1);
 % reshape frames if necessary
 if isempty(varargin)
     [N,M] = size(oldFrame);
@@ -27,10 +28,14 @@ end
 % Need to redo
 ptsOld = detectSURFFeatures(oldFrame);
 ptsCur = detectSURFFeatures(curFrame);
+% ptsOld = detectMSERFeatures(oldFrame);
+% ptsCur = detectMSERFeatures(curFrame);
 [featOld,ptsOld] = extractFeatures(oldFrame,ptsOld);
 [featCur,ptsCur] = extractFeatures(curFrame,ptsCur);
 indexPairs = matchFeatures(featOld,featCur);
 ptsOld = ptsOld(indexPairs(:,1),:);
 ptsCur = ptsCur(indexPairs(:,2),:);
-tform = estimateGeometricTransform(ptsOld,ptsCur,'projective');
-oldFrame_stabalized(:) = imwarp(oldFrame,tform,'OutputView',imref2d([N M]));
+% tform = estimateGeometricTransform(ptsOld,ptsCur,'projective');
+tform = estimateGeometricTransform(ptsOld,ptsCur,'affine');
+oldFrame_stabalized = ...
+    imwarp(oldFrame_aug,tform,'OutputView',imref2d([N M]));

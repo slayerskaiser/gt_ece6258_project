@@ -1,0 +1,2 @@
+http://www.mathworks.com/help/vision/examples/object-detection-in-a-cluttered-scene-using-point-feature-matching.html
+http://answers.opencv.org/question/18413/freak-or-brisk-neither-good-nor-faster-than-siftsurf-when-using-bruteforcematcher/

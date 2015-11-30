@@ -1,0 +1,54 @@
+% ECE 6258 Project
+% Klaus Okkelberg and Mengmeng Du
+
+function MV = findMovement(oldFrame,curFrame,blockSize,searchSize)
+% search for movement vectors of blockSize from oldFrame to curFrame in
+% area of searchSize
+
+% set sizes for macroblock and search area
+if length(blockSize) == 1
+    blockSize = [blockSize blockSize];
+end
+if length(searchSize) == 1
+    searchSize = [searchSize searchSize];
+end
+% get frame size
+[height,width] = size(curFrame);
+% pad with 0s with necessary to be a multiple of blockSize
+padHeight = mod(-height,blockSize(1));
+padWidth = mod(-width,blockSize(2));
+curFrame = padarray(curFrame,[padHeight,padWidth],0,'post');
+oldFrame = padarray(oldFrame,[padHeight,padWidth],0,'post');
+
+% find movement vectors using MAD
+MV = zeros([height+padHeight width+padWidth]./blockSize);
+MAD = zeros(2*searchSize+1);
+% vectors of shifts
+py = -searchSize(1):searchSize(1);
+px = -searchSize(2):searchSize(2);
+% loop over macroblocks
+for heightIdx = 1:size(MV,1)
+    for widthIdx = 1:size(MV,2)
+        % macroblock
+        MB = curFrame((heightIdx-1)*blockSize(1)+(1:blockSize(1)), ...
+            (widthIdx-1)*blockSize(2)+(1:blockSize(2)));
+        % loop over search shifts
+        MAD(:) = inf;
+        for pyIdx = 1:length(py)
+            for pxIdx = 1:length(px)
+                % check that search is within bounds of image
+                pixelIdx = ([heightIdx widthIdx]-1).*blockSize ...
+                    + [py(pyIdx) px(pxIdx)];
+                if any(pixelIdx <  0) || any(pixelIdx+blockSize > [height+padHeight width+padWidth])
+                    continue
+                end
+                shiftFrame = oldFrame(pixelIdx(1)+(1:blockSize(1)), ...
+                    pixelIdx(2)+(1:blockSize(2)));
+                MAD(pyIdx,pxIdx) = norm(MB(:)-shiftFrame(:),1);
+            end
+        end
+        % find movement using min. MAD
+        [subY,subX] = find(min(MAD(:))==MAD,1);
+        MV(heightIdx,widthIdx) = px(subX) + 1j*py(subY);
+    end
+end
