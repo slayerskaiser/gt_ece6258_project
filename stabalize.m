@@ -1,7 +1,7 @@
 % ECE 6258 Project
 % Klaus Okkelberg and Mengmeng Du
 
-function oldFrame_stabalized = stabalize(oldFrame_aug,curFrame_aug,varargin)
+function [oldFrame_stabalized,inlierOld,inlierCur] = stabalize(oldFrame_aug,curFrame_aug,varargin)
 % given current and and old frames, returns old frame that has been
 % transformed so its background matches that of the current
 
@@ -36,6 +36,6 @@ indexPairs = matchFeatures(featOld,featCur);
 ptsOld = ptsOld(indexPairs(:,1),:);
 ptsCur = ptsCur(indexPairs(:,2),:);
 % tform = estimateGeometricTransform(ptsOld,ptsCur,'projective');
-tform = estimateGeometricTransform(ptsOld,ptsCur,'affine');
+[tform,inlierOld,inlierCur] = estimateGeometricTransform(ptsOld,ptsCur,'affine');
 oldFrame_stabalized = ...
     imwarp(oldFrame_aug,tform,'OutputView',imref2d([N M]));
