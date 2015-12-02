@@ -5,4 +5,4 @@ function out = lens_correct2(in)
 
 % ftype=3 and k=-0.32
 
-out = lensdistort(in,-0.32, 'ftype', 3);
+out = lensdistort(in,-0.05, 'ftype', 3);
