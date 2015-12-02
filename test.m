@@ -1,5 +1,7 @@
 vidObj = VideoReader('videos/GOPR0073.MP4');
 
-a = fetchFrame(vidObj,1);
-b = fetchFrame(vidObj,2);
-aa = stabalize(a,b);
+a = fetchFrame(vidObj,2);
+b = fetchFrame(vidObj,3);
+
+%%
+[aa,i1,i2,t1] = stabalize(a,b);

@@ -12,7 +12,7 @@ function out = lens_correct(in)
 %                       => [0.01369   0.06904   0.00103   0.00055  0.00000]
 % Pixel error:    err = [0.16702   0.32813]
 
-in = colorcorrect_uw_full(in);
+% in = colorcorrect_uw_full(in);
 IntrinsicMatrix = [1135.63 0 0;
     0 1130.02 0;
     651.91 349.40 1];

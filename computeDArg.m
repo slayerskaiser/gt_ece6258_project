@@ -14,6 +14,6 @@ DArg = sum(aArg,3);
 end
 
 function YArg = computeYArg(I)
-[~,GAng] = imgradient(I,'prewitt');
-[~,YArg] = imgradientxy(-GAng,'prewitt');
+[~,GAng] = imgradient(I,'sobel');
+[~,YArg] = imgradientxy(-GAng,'sobel');
 end

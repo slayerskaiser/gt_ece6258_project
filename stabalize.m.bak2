@@ -1,0 +1,74 @@
+% ECE 6258 Project
+% Klaus Okkelberg and Mengmeng Du
+
+function [oldFrame_stabalized,ptsOld,ptsCur,transOld] = ...
+    stabalize(oldFrame_aug,curFrame_aug,varargin)
+% given current and and old frames, returns old frame that has been
+% transformed so its background matches that of the current
+
+% remove augmentation from input frames
+oldFrame = oldFrame_aug(:,:,1);
+curFrame = curFrame_aug(:,:,1);
+% reshape frames if necessary
+if isempty(varargin)
+    [N,M] = size(oldFrame);
+else
+    if length(varargin) == 1
+        [N,M] = deal(varargin{1});
+    elseif length(varargin) == 2
+        N = varargin{1};
+        M = varargin{2};
+    else
+        error('Wrong number of inputs')
+    end
+    oldFrame = reshape(oldFrame,N,M);
+    curFrame = reshape(curFrame,N,M);
+end
+oldFrame = im2uint8(oldFrame);
+curFrame = im2uint8(curFrame);
+
+% extract ORB features of frames
+orb = cv.ORB;
+[ptsOld,featOld] = orb.detectAndCompute(oldFrame);
+[ptsCur,featCur] = orb.detectAndCompute(curFrame);
+featOld = binaryFeatures(featOld);
+featCur = binaryFeatures(featCur);
+indexPairs = matchFeatures(featOld,featCur);
+
+% pOld_prev = reshape([ptsOld.pt],2,[]).';
+% pCur_prev = reshape([ptsCur.pt],2,[]).';
+
+ptsOld = reshape([ptsOld(indexPairs(:,1)).pt],2,[]).';
+ptsCur = reshape([ptsCur(indexPairs(:,2)).pt],2,[]).';
+
+% matchThreshold = 0.1*8*size(featOld,2);
+% matcher = cv.DescriptorMatcher('BruteForce-Hamming');
+% matches = matcher.match(featOld,featCur);
+% idx = find([matches.distance] <= matchThreshold);
+% ptsOld = ptsOld([matches(idx).queryIdx]);
+% ptsCur = ptsCur([matches(idx).trainIdx]);
+% M = cv.findHomography({ptsOld.pt}, {ptsCur.pt}, 'Method', 'Ransac');
+% oldFrame_stabalized = cv.warpPerspective(oldFrame, M);
+% oldFrame_stabalized = im2double(oldFrame_stabalized);
+
+% ptsOld = reshape([ptsOld.pt]+1,2,[]).';
+% ptsCur = reshape([ptsCur.pt]+1,2,[]).';
+% tform = estimateGeometricTransform(ptsOld,ptsCur,'projective');
+
+% ptsOld = detectSURFFeatures(oldFrame);
+% ptsCur = detectSURFFeatures(curFrame);
+% [featOld,ptsOld] = extractFeatures(oldFrame,ptsOld);
+% [featCur,ptsCur] = extractFeatures(curFrame,ptsCur);
+% indexPairs = matchFeatures(featOld,featCur);
+% ptsOld = ptsOld(indexPairs(:,1),:);
+% ptsCur = ptsCur(indexPairs(:,2),:);
+
+[tform,inlierOld,inlierCur] = estimateGeometricTransform(ptsOld,ptsCur,'affine');
+oldFrame_stabalized = ...
+    imwarp(oldFrame_aug,tform,'OutputView',imref2d([N M]));
+
+% tform = affine2d(tform.T);
+% T = maketform('affine',double(tform.T));
+% transOld = tformfwd(T,ptsOld);
+% transOld = transformPointsForward(tform,ptsOld.Location);
+transOld = transformPointsForward(tform,ptsOld);

@@ -19,9 +19,11 @@ T_logLMS2lab = diag([1/sqrt(3),1/sqrt(6),1/sqrt(2)]) ...
     * [1 1 1; 1 1 -2; 1 -1 0];
 
 in = in*T_RGB2XYZ.'*T_XYZ2LMS.';
-in = exp(log(in)*T_logLMS2lab.');
+% in = exp(log(in)*T_logLMS2lab.');
+in = in*T_logLMS2lab.';
 
 for k = 1:C
 %     out(:,:,k) = reshape(im2uint8(mat2gray(in(:,k))),N,M);
     out(:,:,k) = reshape(mat2gray(in(:,k)),N,M);
+%     out(:,:,k) = reshape(in(:,k),N,M);
 end

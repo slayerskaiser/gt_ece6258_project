@@ -1,7 +1,8 @@
 % ECE 6258 Project
 % Klaus Okkelberg and Mengmeng Du
 
-function [oldFrame_stabalized,inlierOld,inlierCur] = stabalize(oldFrame_aug,curFrame_aug,varargin)
+function [oldFrame_stabalized,ptsOld,ptsCur,transOld] = ...
+    stabalize(oldFrame_aug,curFrame_aug,varargin)
 % given current and and old frames, returns old frame that has been
 % transformed so its background matches that of the current
 
@@ -23,19 +24,23 @@ else
     oldFrame = reshape(oldFrame,N,M);
     curFrame = reshape(curFrame,N,M);
 end
+oldFrame = im2uint8(oldFrame);
+curFrame = im2uint8(curFrame);
 
-% Using Matlab built-ins
-% Need to redo
-ptsOld = detectSURFFeatures(oldFrame);
-ptsCur = detectSURFFeatures(curFrame);
-% ptsOld = detectMSERFeatures(oldFrame);
-% ptsCur = detectMSERFeatures(curFrame);
-[featOld,ptsOld] = extractFeatures(oldFrame,ptsOld);
-[featCur,ptsCur] = extractFeatures(curFrame,ptsCur);
-indexPairs = matchFeatures(featOld,featCur);
-ptsOld = ptsOld(indexPairs(:,1),:);
-ptsCur = ptsCur(indexPairs(:,2),:);
-% tform = estimateGeometricTransform(ptsOld,ptsCur,'projective');
-[tform,inlierOld,inlierCur] = estimateGeometricTransform(ptsOld,ptsCur,'affine');
+% [ptsOld,ptsCur] = findMatch_ORB(oldFrame,curFrame);
+% [ptsOld,ptsCur] = findMatch_MSER(oldFrame,curFrame);
+% [ptsOld,ptsCur] = findMatch_SIFT(oldFrame,curFrame);
+% [ptsOld,ptsCur] = findMatch_HessianAffine(oldFrame,curFrame);
+
+% [ptsOld,ptsCur] = findMatch_SURF(oldFrame,curFrame);
+[ptsOld,ptsCur] = findMatch_ModifiedSURF(oldFrame,curFrame);
+
+[tform,inlierOld,inlierCur] = estimateGeometricTransform(ptsOld,ptsCur,'projective');
 oldFrame_stabalized = ...
     imwarp(oldFrame_aug,tform,'OutputView',imref2d([N M]));
+
+if isfloat(ptsOld)
+    transOld = transformPointsForward(tform,ptsOld);
+else
+    transOld = transformPointsForward(tform,ptsOld.Location);
+end
