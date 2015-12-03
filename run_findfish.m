@@ -7,9 +7,9 @@ tic
 
 %% Read frames in file
 %%% look into: vision.VideoFileReader
-vidObj = VideoReader('videos\GOPR0073.MP4');
+vidObj = VideoReader('videos/GOPR0059.MP4');
 % nFrames = vidObj.NumberOfFrames;
-nFrames = 20;
+nFrames = 50;
 
 %% Moving pixel detection
 % Moving average detection algorithm

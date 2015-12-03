@@ -1,7 +1,7 @@
 function [ptsOld,ptsCur] = findMatch_ModifiedSURF(oldFrame,curFrame)
 
-% detector = cv.FeatureDetector('FastFeatureDetector');
-detector = cv.FeatureDetector('SIFT');
+detector = cv.FeatureDetector('FastFeatureDetector');
+% detector = cv.FeatureDetector('SIFT');
 % detector = cv.FeatureDetector('SURF');
 ptsOld = detector.detect(oldFrame);
 ptsCur = detector.detect(curFrame);

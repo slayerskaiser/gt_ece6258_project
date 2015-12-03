@@ -30,7 +30,6 @@ curFrame = im2uint8(curFrame);
 % [ptsOld,ptsCur] = findMatch_ORB(oldFrame,curFrame);
 % [ptsOld,ptsCur] = findMatch_MSER(oldFrame,curFrame);
 % [ptsOld,ptsCur] = findMatch_SIFT(oldFrame,curFrame);
-% [ptsOld,ptsCur] = findMatch_HessianAffine(oldFrame,curFrame);
 
 % [ptsOld,ptsCur] = findMatch_SURF(oldFrame,curFrame);
 [ptsOld,ptsCur] = findMatch_ModifiedSURF(oldFrame,curFrame);
