@@ -9,7 +9,7 @@ tic
 %%% look into: vision.VideoFileReader
 vidObj = VideoReader('videos/GOPR0059.MP4');
 % nFrames = vidObj.NumberOfFrames;
-nFrames = 50;
+nFrames = 10;
 
 %% Moving pixel detection
 % Moving average detection algorithm

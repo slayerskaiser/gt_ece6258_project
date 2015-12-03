@@ -2,6 +2,7 @@ function [ptsFrame,ptsFish] = findFish_ModifiedSURF(frame,frameMask,fish,fishMas
 
 % detector = cv.FeatureDetector('FastFeatureDetector');
 detector = cv.FeatureDetector('SIFT');
+% detector = cv.FeatureDetector('ORB');
 % detector = cv.FeatureDetector('SURF');
 ptsFish = detector.detect(fish,'Mask',fishMask);
 ptsFrame = detector.detect(frame,'Mask',frameMask);
