@@ -1,2 +1,3 @@
 ones(10)*ones(10);
-addpath('~/mexopencv')
+% addpath('~/mexopencv')
+run('~/vlfeat/toolbox/vl_setup');

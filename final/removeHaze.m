@@ -1,7 +1,7 @@
 % ECE 6258 Project
 % Klaus Okkelberg and Mengmeng Du
 
-function [J,t,tMask] = removeHaze(frame,soften)
+function [J,t,tMask,tOld] = removeHaze(frame,soften)
 % remove "haze" due to water absorption and scattering from frame, using:
 % Single Image Haze Removal using Dark Channel Prior, by Kaiming He, Jian Sun, and Xiaoou Tang, in CVPR 2009
 
@@ -17,7 +17,7 @@ t0 = 0.1;
 
 % estimate transmission
 blockSize = 15; % size of sliding patch
-omega = 0.95; % parameter to adjust haze based on distance
+omega = 0.8; % parameter to adjust haze based on distance
 t = zeros([height width nColors]);
 for idx = 1:nColors
     minRow = colfilt(frame(:,:,idx),'indexed',[1 blockSize],'sliding',@min);
@@ -34,20 +34,22 @@ if soften
     L = mattingLaplacian(frame,window,mask);
     L = L + lambda*speye(height*width);
     M = ichol(L,struct('type','ict','droptol',1e-3,'diagcomp',max(diag(L)),'michol','on'));
+    tOld = t;
     [t,~] = pcg(L,lambda*t(:),1e-3,height*width,M,M');
     t = reshape(t,height,width);
 end
 
 % estimate atmospheric light
 %
-% get 0.01% brightest in transmission map
+% get 0.1% brightest in transmission map
 tSort = sort(t(:),1,'descend');
 Nt = ceil(0.001*numel(t));
 tMask = t > tSort(Nt);
 % get average of unmasked values
 A = zeros(nColors,1);
 for idx = 1:nColors
-    A(idx) = mean(frame(tMask));
+    frameChannel = frame(:,:,idx);
+    A(idx) = mean(frameChannel(tMask));
 end
 
 % scene radiance

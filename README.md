@@ -17,3 +17,9 @@ The following videos are being considered for this project:
   - GOPR0062
   - GOPR0063
   - GOPR0059
+  
+The main steps are:
+  - Image stabalization using FAST keypoint detection and SURF descriptors.
+  - Motion detection between moving average of previous stabalized frames and current frame.
+  - Additional masking based on estimated transmission map using dark channel prior method
+  - Fish recognition using SURF and affine transformation matching to remove outliers.
