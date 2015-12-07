@@ -9,26 +9,17 @@ count = 0;
 
 % convert fish image to double and grayscale
 fish = im2double(fish);
-fish = rgb2gray(fish);
-% motion average parameter
-alpha = 0.8;
-% frame difference and transmission map combination parameter
-beta = 0.02;
-% minimum threshold for transmission map
-t0 = 0.1;
-% ratios of max and mean pixels to keep in mask
-rMean = 2;
-rMax = 0.9;
-% dilation structure
-se = strel('disk',10);
+fishGray = rgb2gray(fish);
+% load detection parameters
+loadDetectionParameters
 % cell array for holding detected fish feature locations
 fishPointsFrame = cell(nFrames,1);
 % cell array for holding corresponding locations on fish
 fishPoints = cell(nFrames,1);
 
 % find SURF descriptors for fish image
-ptsFish = detectFASTFeatures(fish,'MinContrast',0.04);
-[featFish,ptsFish] = extractFeatures(fish,[ptsFish.Location],'Method','SURF');
+ptsFish = detectFASTFeatures(fishGray,'MinContrast',0.04);
+[featFish,ptsFish] = extractFeatures(fishGray,[ptsFish.Location],'Method','SURF');
 
 % set first frame as background
 CB = fetchFrameColor(vidObj,1);
@@ -54,11 +45,12 @@ for idx = 1:nFrames
     % refine transmission based on difference
     tRefine = (1-beta)*t + beta*imclearborder(frameMaskDiff);
     frameMask = tRefine > tThresh;
-    % dilation
+    % remove small regions in mask
     stats = regionprops(t > tThresh);
     areas = [stats.Area];
     minArea = round(min(rMean*mean(areas), rMax*max(areas)));
     frameMask = bwareaopen(frameMask,minArea);
+    % dilate mask
     frameMask = imdilate(frameMask,se);
         
     % use mask to find fish feature locations
