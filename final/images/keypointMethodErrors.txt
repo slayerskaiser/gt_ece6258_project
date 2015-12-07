@@ -1,0 +1,4 @@
+Norm error between frames, SURF keypoints =
+	67.353419
+Norm error between frames, FAST keypoints =
+	59.608335

@@ -2,9 +2,14 @@
 % Klaus Okkelberg and Mengmeng Du
 
 function [oldFrame_stabalized,ptsOld,ptsCur,transOld] = ...
-    stabalize(oldFrame_aug,curFrame_aug,varargin)
+    stabalize(oldFrame_aug,curFrame_aug,keypointMethod,varargin)
 % given current and and old frames, returns old frame that has been
 % transformed so its background matches that of the current
+
+% input parsing
+if ~exist('keypointMethod','var') || isempty(keypointMethod)
+    keypointMethod = 'FAST';
+end
 
 % remove augmentation from input frames
 oldFrame = oldFrame_aug(:,:,1);
@@ -27,7 +32,7 @@ end
 oldFrame = im2uint8(oldFrame);
 curFrame = im2uint8(curFrame);
 
-[ptsOld,ptsCur] = findMatch_ModifiedSURF(oldFrame,curFrame);
+[ptsOld,ptsCur] = findMatch_ModifiedSURF(oldFrame,curFrame,keypointMethod);
 
 tform = estimateGeometricTransform(ptsOld,ptsCur,'projective');
 % skip stabalization if transform matrix is singular

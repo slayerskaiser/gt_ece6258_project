@@ -25,9 +25,12 @@ if strcmpi(keypointMethod,'FAST')
 elseif strcmpi(keypointMethod,'SURF')
     numOctaves = 4;
     numScales = 6;
+    thresh = 500;
     matchMethod = 'NearestNeighborRatio';
-    pts1 = detectSURFFeatures(frame1.*mask1,'NumOctaves',numOctaves,'NumScaleLevels',numScales);
-    pts2 = detectSURFFeatures(frame2.*mask2,'NumOctaves',numOctaves,'NumScaleLevels',numScales);
+    pts1 = detectSURFFeatures(frame1.*mask1,'NumOctaves',numOctaves,...
+        'NumScaleLevels',numScales,'MetricThreshold',thresh);
+    pts2 = detectSURFFeatures(frame2.*mask2,'NumOctaves',numOctaves,...
+        'NumScaleLevels',numScales,'MetricThreshold',thresh);
 else
     error('Unknown method')
 end
