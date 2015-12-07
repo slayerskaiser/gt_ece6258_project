@@ -16,17 +16,18 @@ if ~exist('mask2','var') || isempty(mask2)
     mask2 = ones(size(frame2),'uint8');
 end
 
+% common parameters
+matchMethod = 'NearestNeighborRatio';
+
 % for testing effect of keypoint method; default to FAST
 if strcmpi(keypointMethod,'FAST')
     minContrast = 0.04;
-    matchMethod = 'NearestNeighborRatio';
     pts1 = detectFASTFeatures(frame1.*mask1,'MinContrast',minContrast);
     pts2 = detectFASTFeatures(frame2.*mask2,'MinContrast',minContrast);
 elseif strcmpi(keypointMethod,'SURF')
     numOctaves = 4;
     numScales = 6;
     thresh = 500;
-    matchMethod = 'NearestNeighborRatio';
     pts1 = detectSURFFeatures(frame1.*mask1,'NumOctaves',numOctaves,...
         'NumScaleLevels',numScales,'MetricThreshold',thresh);
     pts2 = detectSURFFeatures(frame2.*mask2,'NumOctaves',numOctaves,...

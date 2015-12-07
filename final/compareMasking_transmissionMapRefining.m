@@ -2,6 +2,7 @@
 % Klaus Okkelberg and Mengmeng Du
 %
 % Compare effect of refining of transmission map on masking
+% NOTE THIS NEEDS AT LEAST 8 GB OF FREE MEMORY
 
 clear
 close all
