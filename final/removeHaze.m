@@ -1,7 +1,7 @@
 % ECE 6258 Project
 % Klaus Okkelberg and Mengmeng Du
 
-function [J,t,tMask,tOld] = removeHaze(frame,soften)
+function [J,t,tThresh] = removeHaze(frame,soften)
 % remove "haze" due to water absorption and scattering from frame, using:
 % Single Image Haze Removal using Dark Channel Prior, by Kaiming He, Jian Sun, and Xiaoou Tang, in CVPR 2009
 
@@ -34,7 +34,6 @@ if soften
     L = mattingLaplacian(frame,window,mask);
     L = L + lambda*speye(height*width);
     M = ichol(L,struct('type','ict','droptol',1e-3,'diagcomp',max(diag(L)),'michol','on'));
-    tOld = t;
     [t,~] = pcg(L,lambda*t(:),1e-3,height*width,M,M');
     t = reshape(t,height,width);
 end
@@ -51,6 +50,8 @@ for idx = 1:nColors
     frameChannel = frame(:,:,idx);
     A(idx) = mean(frameChannel(tMask));
 end
+% 1% brightest for thresholding
+tThresh = tSort(ceil(0.01*numel(t)));
 
 % scene radiance
 J = zeros([height width nColors]);

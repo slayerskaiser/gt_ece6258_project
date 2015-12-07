@@ -3,7 +3,7 @@
 
 function [pts1,pts2] = findMatch_ModifiedSURF(frame1,frame2,keypointMethod,mask1,mask2)
 % detect features for frame stabalization using given keypoints and SURF
-% descriptors; default to FASt keypoints
+% descriptors; default to FAST keypoints
 
 if ~exist('keypointMethod','var') || isempty(keypointMethod)
     keypointMethod = 'FAST';
@@ -20,18 +20,21 @@ if strcmpi(keypointMethod,'FAST')
     matchMethod = 'NearestNeighborRatio';
     pts1 = detectFASTFeatures(frame1.*mask1,'MinContrast',minContrast);
     pts2 = detectFASTFeatures(frame2.*mask2,'MinContrast',minContrast);
-elseif strcmpi(keypointMethod,'SIFT')
-%     minContrast = 0.04;
-    matchMethod = 'NearestNeighborSymmetric';
-%     pts1 = detectFASTFeatures(frame1.*mask1,'MinContrast',minContrast);
-%     pts2 = detectFASTFeatures(frame2.*mask2,'MinContrast',minContrast);
-    pts1 = vl_sift(single(frame1.*mask1));
-    pts2 = vl_sift(single(frame2.*mask2));
-elseif strcmpi(keypointMethod,'SURF')
-    numOctaves = 4;
-    matchMethod = 'NearestNeighborSymmetric';
-    pts1 = detectSURFFeatures(frame1.*mask1,'NumOctaves',numOctaves);
-    pts2 = detectSURFFeatures(frame2.*mask2,'NumOctaves',numOctaves);
+% elseif strcmpi(keypointMethod,'SIFT')
+% %     minContrast = 0.04;
+%     matchMethod = 'NearestNeighborSymmetric';
+%     pts1 = vl_sift(single(frame1.*mask1));
+%     pts2 = vl_sift(single(frame2.*mask2));
+% elseif strcmpi(keypointMethod,'SURF')
+%     numOctaves = 4;
+%     numScales = 6;
+% %     matchMethod = 'NearestNeighborSymmetric';
+%     matchMethod = 'Threshold';
+%     pts1 = detectSURFFeatures(frame1.*mask1,'NumOctaves',numOctaves,'NumScaleLevels',numScales);
+%     pts2 = detectSURFFeatures(frame2.*mask2,'NumOctaves',numOctaves,'NumScaleLevels',numScales);
+%     
+%     pts1 = detectMSERFeatures(frame1.*mask1,'ThresholdDelta',0.8);
+%     pts2 = detectMSERFeatures(frame2.*mask2,'ThresholdDelta',0.8);
 else
     error('Unknown method')
 end
