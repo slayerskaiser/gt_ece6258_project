@@ -2,7 +2,7 @@
 % Klaus Okkelberg and Mengmeng Du
 %
 % Compare effect of masking on fish detection
-% (slightly difference since background estimate is not used
+% (slightly difference since background estimate is not used)
 
 clear
 close all
@@ -68,9 +68,6 @@ figure(2)
 showMatchedFeatures(fish,frame,ptsFishMask,ptsFrameMask,'montage')
 saveas(gcf,'images/fishDetection_masking.png')
 figure(3)
-imshowpair(frameMask,frame,'ColorChannels','red-cyan')
-saveas(gcf,'images/fishDetection_mask.png')
-figure(4)
 imshow(frame); hold on
 plot(ptsFrameMask)
-saveas(gcf,'images/fishDetection_masking_keypointLocations')
+saveas(gcf,'images/fishDetection_masking_keypointLocations.png')
