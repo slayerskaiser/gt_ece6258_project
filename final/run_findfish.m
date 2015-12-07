@@ -21,3 +21,6 @@ fprintf('Frames = %d\n',nFrames)
 %% Fish detection
 % Detect fish based on masking using transmission map
 [fishPointsFrame,fishPoints] = detectFish(vidObj,nFrames,fish);
+
+%% Display matches
+showFish(vidObj,fishPointsFrame,fish,fishPoints)
