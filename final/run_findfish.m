@@ -12,8 +12,8 @@ fprintf('Processing: %s\n',filename);
 %% Read frames in file
 vidObj = VideoReader(filename);
 % frames to compute
-% nFrames = vidObj.NumberOfFrames;
-nFrames = 10;
+nFrames = vidObj.NumberOfFrames;
+% nFrames = 10;
 fprintf('Frames = %d\n',nFrames)
 % load fish image and mask for image
 [fish,fishmask] = genFish('fish_cropped.jpg',[vidObj.Height vidObj.Width]/2);

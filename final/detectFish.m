@@ -10,12 +10,6 @@ count = 0;
 % convert fish image to double and grayscale
 fish = im2double(fish);
 fish = rgb2gray(fish);
-% bounding box for fish
-fishPolygon = [1 1;
-             size(fish,2) 1;
-             size(fish,2) size(fish,1);
-             1 size(fish,1);
-             1 1];
 % motion average parameter
 alpha = 0.8;
 % frame difference and transmission map combination parameter
@@ -31,8 +25,6 @@ se = strel('disk',10);
 fishPointsFrame = cell(nFrames,1);
 % cell array for holding corresponding locations on fish
 fishPoints = cell(nFrames,1);
-% cell array for holding transformed bounding boxes for each fish per frame
-fishBoxes = cell(nFrames,1);
 
 % find SURF descriptors for fish image
 ptsFish = detectFASTFeatures(fish,'MinContrast',0.04);
@@ -70,8 +62,8 @@ for idx = 1:nFrames
     frameMask = imdilate(frameMask,se);
         
     % use mask to find fish feature locations
-    [fishPointsFrame{idx},fishPoints{idx},fishBoxes{idx}] = ...
-        findFish_ModifiedSURF(frameGray,frameMask,ptsFish,featFish,fishPolygon);
+    [fishPointsFrame{idx},fishPoints{idx}] = ...
+        findFish_ModifiedSURF(frameGray,frameMask,ptsFish,featFish);
     
     % update background
     CB = (1-alpha)*CB + alpha*frame;
