@@ -14,7 +14,7 @@ matchThresh = 5;
 % find FAST keypoints in masked frame
 ptsFrame = detectFASTFeatures(frame.*frameMask,'MinContrast',minContrast);
 % extract SURF descriptors
-[featFrame,ptsFrame] = extractFeatures(frame,ptsFrame,'Method','SURF');
+[featFrame,ptsFrame] = extractFeatures(frame,[ptsFrame.Location],'Method','SURF');
 % find matching descriptors to SURF descriptors of fish using thresholding
 indexPairs = matchFeatures(featFrame, featFish, ...
     'Method', matchMethod, 'MatchThreshold', matchThresh);

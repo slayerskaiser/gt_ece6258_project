@@ -33,8 +33,8 @@ else
 end
 
 % extract SURF descriptors and find matches
-[feat1,pts1] = extractFeatures(frame1,pts1,'Method','SURF');
-[feat2,pts2] = extractFeatures(frame2,pts2,'Method','SURF');
+[feat1,pts1] = extractFeatures(frame1,[pts1.Location],'Method','SURF');
+[feat2,pts2] = extractFeatures(frame2,[pts2.Location],'Method','SURF');
 indexPairs = matchFeatures(feat1, feat2, 'Prenormalized', true, ...
     'Method', matchMethod);
 pts1 = pts1(indexPairs(:,1),:);

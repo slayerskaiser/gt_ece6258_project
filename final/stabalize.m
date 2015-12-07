@@ -30,9 +30,14 @@ curFrame = im2uint8(curFrame);
 [ptsOld,ptsCur] = findMatch_ModifiedSURF(oldFrame,curFrame);
 
 tform = estimateGeometricTransform(ptsOld,ptsCur,'projective');
-oldFrame_stabalized = ...
-    imwarp(oldFrame_aug,tform,'OutputView',imref2d([N M]), ...
-    'FillValues',0.5);
+% skip stabalization if transform matrix is singular
+if rank(tform.T) == 3
+    oldFrame_stabalized = ...
+        imwarp(oldFrame_aug,tform,'OutputView',imref2d([N M]), ...
+        'FillValues',0.5);
+else
+    oldFrame_stabalized = oldFrame_aug;
+end
 
 if isfloat(ptsOld)
     transOld = transformPointsForward(tform,ptsOld);

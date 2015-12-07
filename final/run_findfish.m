@@ -5,22 +5,29 @@ clear
 close all
 tic
 
-%% Parameters
-filename = '../videos/GOPR0059.MP4';
-fprintf('Processing: %s\n',filename);
+% turn off warning for imshow()
+warning('off','images:initSize:adjustingMag');
 
-%% Read frames in file
+%% Parameters
+% filename
+filename = '../videos/GOPR0059.MP4';
 vidObj = VideoReader(filename);
+
 % frames to compute
-nFrames = vidObj.NumberOfFrames;
-% nFrames = 10;
+% nFrames = vidObj.NumberOfFrames;
+nFrames = 30;
+
+fprintf('Processing: %s\n',filename);
 fprintf('Frames = %d\n',nFrames)
-% load fish image and mask for image
+
+%% load fish image and mask for image
 [fish,fishmask] = genFish('fish_cropped.jpg',[vidObj.Height vidObj.Width]/2);
 
 %% Fish detection
 % Detect fish based on masking using transmission map
-[fishPointsFrame,fishPoints] = detectFish(vidObj,nFrames,fish);
+figure(1)
+[fishPointsFrame,fishPoints] = detectFish(vidObj,nFrames,fish,true);
 
 %% Display matches
-showFish(vidObj,fishPointsFrame,fish,fishPoints)
+% figure(1)
+% showFish(vidObj,fishPointsFrame,fish,fishPoints)

@@ -1,8 +1,8 @@
 % ECE 6258 Project
 % Klaus Okkelberg and Mengmeng Du
 
-function [fishPointsFrame,fishPoints,fishBoxes] = ...
-    detectFish(vidObj,nFrames,fish)
+function [fishPointsFrame,fishPoints] = ...
+    detectFish(vidObj,nFrames,fish,realtime)
 
 fprintf('=== Fish detection ===\n')
 count = 0;
@@ -28,7 +28,7 @@ fishPoints = cell(nFrames,1);
 
 % find SURF descriptors for fish image
 ptsFish = detectFASTFeatures(fish,'MinContrast',0.04);
-[featFish,ptsFish] = extractFeatures(fish,ptsFish,'Method','SURF');
+[featFish,ptsFish] = extractFeatures(fish,[ptsFish.Location],'Method','SURF');
 
 % set first frame as background
 CB = fetchFrameColor(vidObj,1);
@@ -64,6 +64,14 @@ for idx = 1:nFrames
     % use mask to find fish feature locations
     [fishPointsFrame{idx},fishPoints{idx}] = ...
         findFish_ModifiedSURF(frameGray,frameMask,ptsFish,featFish);
+    
+    if realtime
+        if ~isempty(fishPointsFrame)
+            showMatchedFeatures(fish,frame,fishPoints{idx},fishPointsFrame{idx},'montage')
+            title(['Frame ' num2str(idx)])
+            snapnow
+        end
+    end
     
     % update background
     CB = (1-alpha)*CB + alpha*frame;
