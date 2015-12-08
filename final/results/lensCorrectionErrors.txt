@@ -1,0 +1,4 @@
+Norm error between frames, no lens correction =
+	66.003242
+Norm error between frames, with lens correction =
+	59.395030

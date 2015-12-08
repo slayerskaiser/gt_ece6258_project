@@ -9,7 +9,7 @@ close all
 
 %% Read current and previous frame; generate mask
 
-filename = '../videos/GOPR0059.MP4';
+filename = 'videos/GOPR0059.MP4';
 vidObj = VideoReader(filename);
 
 % use 3rd frame as current

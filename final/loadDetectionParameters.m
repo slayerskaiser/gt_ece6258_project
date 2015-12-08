@@ -5,8 +5,10 @@
 
 % motion average parameter
 alpha = 0.8;
+Alpha = alpha; % to fix calling of alpha.m
 % frame difference and transmission map combination parameter
 beta = 0.02;
+Beta = beta; % to fix calling of beta.m
 % minimum threshold for movement detection
 t0 = 0.1;
 % ratios of max and mean pixels to keep in mask

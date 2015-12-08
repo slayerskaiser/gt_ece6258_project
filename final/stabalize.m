@@ -14,7 +14,7 @@ end
 % remove augmentation from input frames
 oldFrame = oldFrame_aug(:,:,1);
 curFrame = curFrame_aug(:,:,1);
-% reshape frames if necessary
+% reshape frames if necessary (legacy reasons)
 if isempty(varargin)
     [N,M] = size(oldFrame);
 else
@@ -32,8 +32,10 @@ end
 oldFrame = im2uint8(oldFrame);
 curFrame = im2uint8(curFrame);
 
+% find matching features using modified SURF method
 [ptsOld,ptsCur] = findMatch_ModifiedSURF(oldFrame,curFrame,keypointMethod);
 
+% estimate projective transformation between frames
 tform = estimateGeometricTransform(ptsOld,ptsCur,'projective');
 % skip stabalization if transform matrix is singular
 if rank(tform.T) == 3
@@ -44,6 +46,7 @@ else
     oldFrame_stabalized = oldFrame_aug;
 end
 
+% transform matching points in old frame (legacy reasons)
 if isfloat(ptsOld)
     transOld = transformPointsForward(tform,ptsOld);
 else

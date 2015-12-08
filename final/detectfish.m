@@ -1,4 +1,4 @@
-% DETECTFISH detect fish in video
+% DETECTFISH Detects fish in video through feature matching
 %   [framePoints,fishPoints] = DETECTFISH(vidObj,nFrames,fish) detects
 %   matching keypoints on each video frame framePoints and the fish image
 %   fishPoints. Input is video object vidObj, number of frames to read
@@ -52,27 +52,33 @@ ptsFish = detectFASTFeatures(fishGray,'MinContrast',0.04);
 CB = fetchFrameColor(vidObj,1);
 
 for idx = 1:nFrames
+    % display progress
     count = fprintf([repmat('\b',1,count) 'Starting frame %d, t=%f'], ...
         idx,toc) - count;
+    
     % read in frame
     frame = fetchFrameColor(vidObj,idx);
-    frameGray = rgb2gray(frame);
+    frameGray = rgb2gray(frame); % convert to grayscale
+    
     % stabalize background based on frame
-    CB_aug = cat(3,rgb2gray(CB),CB);
-    CB_aug = stabalize(CB_aug,frameGray);
-    CB = CB_aug(:,:,2:end);
+    CB_aug = cat(3,rgb2gray(CB),CB); % aug. matrix of grayscale and RGB
+    CB_aug = stabalize(CB_aug,frameGray); % stabalize aug. matrix
+    CB = CB_aug(:,:,2:end); % extract RGB channels
     
     % detect based on difference between current frame and background
-    dif = abs(CB_aug(:,:,1) - frameGray);
-    thresh = graythresh(dif);
-    frameMaskDiff = dif > max(thresh,t0);
+    dif = abs(CB_aug(:,:,1) - frameGray); % difference of grayscale
+    thresh = graythresh(dif); % Otsu's method threshold
+    frameMaskDiff = dif > max(thresh,t0); % threshold with min. of t0
     
     % detect based on transmission map
+    %
+    % t is transmission map without Levin's softening
+    % tThresh returns top 1% brightest
     [~,t,tThresh] = removeHaze(frame);
     % refine transmission based on difference
-    tRefine = (1-beta)*t + beta*imclearborder(frameMaskDiff);
+    tRefine = (1-Beta)*t + Beta*imclearborder(frameMaskDiff);
     frameMask = tRefine > tThresh;
-    % remove small regions in mask
+    % remove small regions in mask (based on mean and max areas of regions)
     stats = regionprops(t > tThresh);
     areas = [stats.Area];
     minArea = round(min(rMean*mean(areas), rMax*max(areas)));
@@ -84,6 +90,7 @@ for idx = 1:nFrames
     [fishPointsFrame{idx},fishPoints{idx}] = ...
         findFish_ModifiedSURF(frameGray,frameMask,ptsFish,featFish);
     
+    % update results in real time if applicable
     if realtime
         if ~isempty(fishPointsFrame)
             showMatchedFeatures(fish,frame,fishPoints{idx}, ...
@@ -93,8 +100,8 @@ for idx = 1:nFrames
         end
     end
     
-    % update background
-    CB = (1-alpha)*CB + alpha*frame;
+    % update color background
+    CB = (1-Alpha)*CB + Alpha*frame;
 end
 
 fprintf('\n')

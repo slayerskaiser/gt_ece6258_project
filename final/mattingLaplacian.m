@@ -2,7 +2,10 @@
 % Klaus Okkelberg and Mengmeng Du
 
 function L = mattingLaplacian(frame,window,mask)
-% generate Levin's NxN matting Laplacian
+% generate Levin's NxN matting Laplacian, from:
+% Levin, A.; Lischinski, D.; Weiss, Y., "A Closed-Form Solution to Natural
+% Image Matting," in Pattern Analysis and Machine Intelligence, IEEE
+% Transactions on , vol.30, no.2, pp.228-242, Feb. 2008
 
 % convert to single for memory usage
 frame = single(frame);

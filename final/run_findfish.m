@@ -13,14 +13,15 @@ warning('off','images:initSize:adjustingMag');
 
 %% Parameters
 % filename
-filename = '../videos/GOPR0059.MP4';
+filename = 'videos/GOPR0059.MP4';
 vidObj = VideoReader(filename);
 
 % frames to compute
-nFrames = vidObj.NumberOfFrames;
+nFrames = 10;
+% nFrames = vidObj.NumberOfFrames;
 
 fprintf('Processing: %s\n',filename);
-fprintf('Frames = %d\n',nFrames)
+fprintf('Frames to process = %d\n',nFrames)
 
 %% load fish image and mask for image
 [fish,fishmask] = genFish('fish_cropped.jpg',[vidObj.Height vidObj.Width]/2);
@@ -30,4 +31,5 @@ fprintf('Frames = %d\n',nFrames)
 [fishPointsFrame,fishPoints] = detectfish(vidObj,nFrames,fish);
 
 %% Display matches
+fprintf('Displaying detection results\n')
 showFish(vidObj,fishPointsFrame,fish,fishPoints)
