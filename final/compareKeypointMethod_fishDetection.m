@@ -69,7 +69,7 @@ showMatchedFeatures(fish,frame,ptsFishSURF,ptsFrameSURF,'montage')
 saveas(gcf,'images/fishDetection_SURF.png')
 figure(2)
 showMatchedFeatures(fish,frame,ptsFishFAST,ptsFrameFAST,'montage')
-saveas(gcf,'images/fishDetection_FAST.png')
+saveas(gcf,'images/fishDetection_FASTSURF.png')
 % record number of keypoints matched and time spent
 filename2 = 'images/fishDetectionStats.txt';
 fileID = fopen(filename2,'w');

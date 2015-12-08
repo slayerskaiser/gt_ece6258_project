@@ -1,2 +1,2 @@
-Number of matched SURF keypoints = 438, time spent = 0.443302
-Number of matched FAST keypoints = 422, time spent = 0.037083
+Number of matched SURF keypoints = 446, time spent = 0.497586
+Number of matched FAST keypoints = 422, time spent = 0.037605

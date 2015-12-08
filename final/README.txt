@@ -28,4 +28,24 @@ The minimal example of how to use the provided code can be found in run_findfish
 
 Video files were kept in the video folder. Image folder holds results from running comparison scripts. Results folder contains results shown in paper (results can change due to RANSAC during feature matching and geometric transformation estimation).
 
+Files in results folder are:
+  - featureMatchingMethodErrors.txt - Frobenius norm between stabalized frames for various keypoint and descriptor methods
+  - fishDetection_FASTSURF.png - Matching keypoints using FAST keypoints and SURF descriptors (should be same as fishDetection_mask.png)
+  - fishDetection_mask.png - Mask using transmission map and background refining, without softening of transmission map
+  - fishDetection_mask_refine.png - Mask using softened transmission map and background refining
+  - fishDetection_masking.png - Matching keypoints with masking
+  - fishDetection_masking_keypointLocations.png - Only the keypoints on the frame (for clarity) using masking
+  - fishDetection_nomasking.png - Matching keypoints without masking
+  - fishDetection_SURF.png - Matching keypoints using SURF keypoints and descriptors
+  - fishDetectionStats.txt - Statistics about number of matched keypoints and time spent
+  - lensCorrectionErrors.txt - Frobenius norm between stabalized frames, with and without lens correction on both frames
+  - stabalization_BRISK.png - Stabalization results using BRISK keypoints and descriptors
+  - stabalization_FASTFREAK.png - Stabalization results using FAST keypoints and FREAK descriptors
+  - stabalization_FASTSURF.png - Stabalization results using FAST keypoints and SURF descriptors
+  - stabalization_lensCorrection.png - Stabalization results with lens correction (should be same as stabalization_FASTSURF.png)
+  - stabalization_MinEigenFREAK.png - Stabalization results using Min. Eigenvalue keypoints and FREAK descriptors
+  - stabalization_MSERSURF.png - Stabalization results using MSER keypoints and SURF descriptors
+  - stabalization_noLensCorrection.png - Stabalization results without lens correction
+  - stabalization_SURF.png - Stabalization results using SURF keypoints and SURF descriptors
+
 The code was developed using Matlab 2014a (with all toolboxes) on Ubuntu Precise. The processor was an Intel Core i5 5200U at 2.2 GHz, and there was 4 GB of RAM. The FFMPEG 0.8.17 and GStreamer 0.10 libraries were used to read the video files.
