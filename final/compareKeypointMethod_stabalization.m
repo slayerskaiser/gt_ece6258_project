@@ -50,7 +50,7 @@ prevFrame_BRISK = prevFrame_aug(:,:,1);
 
 %% Show comparisons of stabalization using different keypoint methods
 % record norm error to text file
-filename2 = 'images/keypointMethodErrors.txt';
+filename2 = 'images/featureMatchingMethodErrors.txt';
 fileID = fopen(filename2,'w');
 % SURF
 figure(1)
