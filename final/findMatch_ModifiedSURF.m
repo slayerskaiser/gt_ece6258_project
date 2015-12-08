@@ -21,10 +21,12 @@ matchMethod = 'NearestNeighborRatio';
 
 % for testing effect of keypoint method; default to FAST
 if strcmpi(keypointMethod,'FAST')
+    descriptor = 'SURF'; % descriptor method
     minContrast = 0.04;
     pts1 = detectFASTFeatures(frame1.*mask1,'MinContrast',minContrast);
     pts2 = detectFASTFeatures(frame2.*mask2,'MinContrast',minContrast);
 elseif strcmpi(keypointMethod,'SURF')
+    descriptor = 'SURF'; % descriptor method
     numOctaves = 4;
     numScales = 6;
     thresh = 500;
@@ -32,14 +34,31 @@ elseif strcmpi(keypointMethod,'SURF')
         'NumScaleLevels',numScales,'MetricThreshold',thresh);
     pts2 = detectSURFFeatures(frame2.*mask2,'NumOctaves',numOctaves,...
         'NumScaleLevels',numScales,'MetricThreshold',thresh);
+elseif strcmpi(keypointMethod,'FASTFREAK')
+    descriptor = 'FREAK'; % descriptor method
+    minContrast = 0.04;
+    pts1 = detectFASTFeatures(frame1.*mask1,'MinContrast',minContrast);
+    pts2 = detectFASTFeatures(frame2.*mask2,'MinContrast',minContrast);
+elseif strcmpi(keypointMethod,'MSER')
+    descriptor = 'SURF'; % descriptor method
+    pts1 = detectMSERFeatures(frame1.*mask1);
+    pts2 = detectMSERFeatures(frame2.*mask2);
+elseif strcmpi(keypointMethod,'ME')
+    descriptor = 'FREAK'; % descriptor method
+    pts1 = detectMinEigenFeatures(frame1.*mask1);
+    pts2 = detectMinEigenFeatures(frame2.*mask2);
+elseif strcmpi(keypointMethod,'BRISK')
+    descriptor = 'BRISK'; % descriptor method
+    pts1 = detectMinEigenFeatures(frame1.*mask1);
+    pts2 = detectMinEigenFeatures(frame2.*mask2);
 else
     error('Unknown method')
 end
 
 % extract SURF descriptors and find matches
-[feat1,pts1] = extractFeatures(frame1,[pts1.Location],'Method','SURF');
-[feat2,pts2] = extractFeatures(frame2,[pts2.Location],'Method','SURF');
-indexPairs = matchFeatures(feat1, feat2, 'Prenormalized', true, ...
-    'Method', matchMethod);
+[feat1,pts1] = extractFeatures(frame1,[pts1.Location],'Method',descriptor);
+[feat2,pts2] = extractFeatures(frame2,[pts2.Location],'Method',descriptor);
+
+indexPairs = matchFeatures(feat1, feat2, 'Method', matchMethod);
 pts1 = pts1(indexPairs(:,1),:);
 pts2 = pts2(indexPairs(:,2),:);

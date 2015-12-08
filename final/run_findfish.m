@@ -1,9 +1,12 @@
+% Minimal example of how to use provided code
+%
 % ECE 6258 Project
 % Klaus Okkelberg and Mengmeng Du
 
 clear
 close all
 tic
+figure(1)
 
 % turn off warning for imshow()
 warning('off','images:initSize:adjustingMag');
@@ -14,8 +17,7 @@ filename = '../videos/GOPR0059.MP4';
 vidObj = VideoReader(filename);
 
 % frames to compute
-% nFrames = vidObj.NumberOfFrames;
-nFrames = 30;
+nFrames = vidObj.NumberOfFrames;
 
 fprintf('Processing: %s\n',filename);
 fprintf('Frames = %d\n',nFrames)
@@ -25,9 +27,7 @@ fprintf('Frames = %d\n',nFrames)
 
 %% Fish detection
 % Detect fish based on masking using transmission map
-figure(1)
-[fishPointsFrame,fishPoints] = detectFish(vidObj,nFrames,fish,true);
+[fishPointsFrame,fishPoints] = detectfish(vidObj,nFrames,fish);
 
 %% Display matches
-% figure(1)
-% showFish(vidObj,fishPointsFrame,fish,fishPoints)
+showFish(vidObj,fishPointsFrame,fish,fishPoints)

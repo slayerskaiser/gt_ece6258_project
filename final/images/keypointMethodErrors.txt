@@ -1,4 +1,12 @@
-Norm error between frames, SURF keypoints =
-	67.353419
-Norm error between frames, FAST keypoints =
-	59.608335
+Norm error between frames, SURF =
+	68.668711
+Norm error between frames, FAST SURF =
+	59.339047
+Norm error between frames, FAST FREAK =
+	61.660337
+Norm error between frames, MSER SURF =
+	140.423893
+Norm error between frames, MinEigen FREAK =
+	60.854573
+Norm error between frames, BRISK =
+	59.912636
