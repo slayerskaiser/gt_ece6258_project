@@ -7,24 +7,24 @@ https://drive.google.com/folderview?id=0B3U6GI2mB6_HOVJKQ2J1bzVGR0U&usp=sharing
 The results in the paper were generated using GOPR0059.MP4 in the main folder. Additional testing was done on GOPR0073.MP4 to tune the parameters, but those results are not shown.
 
 The minimal example of how to use the provided code can be found in run_findfish.m. The main function is detectfish.m. There are extensive comments in that file about the methods. The files are:
-* compareFeatureMatchingMethod_stabalization.m - Compare how keypoint and descriptor methods affect stabalization error
-* compareKeypointMethod_fishDetection.m - Compare how keypoint method (with SURF descriptor) affects fish detection (number of matching keypoints and speed)
-* compareLensCorrection_stabalization.m - Compare how lens correction affects stabalization error
-* compareMasking_fishDetection.m - Compare how masking of keypoints affects fish detection
-* compareMasking_transmissionMapRefining.m - Compare how refining the transmission map from dark channel prior using Levin's matting Laplacian affects accuracy of masking (NOTE THAT THIS FUNCTION NEEDS AT LEAST 8 GB OF FREE MEMORY TO RUN AND IS VERY SLOW)
-* detectfish.m - Main function (see comments within)
-* fetchFrameColor.m - Reads frame from video file and performs stabalization
-* findFish_ModifiedSURF.m - Detects fish features using FAST keypoints and SURF descriptors. Uses thresholding of 5% for matching
-* findMatch_ModifiedSURF.m - Detects features for frame stabalization using FAST keypoints and SURF descriptors. Uses default ratio rejection of 0.6 (max ratio between best and second best match).
-* fish_cropped.jpg - Cropped image of an Indo-Pacific Sergeant (from http://www.whatsthatfish.com/image/view/3828) on black background
-* genFish.m - Reads in fish image and creates mask (legacy reasons)
-* lens_correct.m - Performs lens correction based on GoPro Hero 4 data (tweaked from unknown origin; lost reference when hard drive died)
-* loadDetectionParameters.m - Loads various parameters for consistency between main detectfish.m file and auxillary comparison files
-* mattingLaplacian.m - Generates Levin's matting Laplacian matrix
-* removeHaze.m - Removes "haze" from being underwater using dark channel prior method (source in file); if specified, softens the estimated transmission map by solving Levin's matting Laplacian using conjugate gradient method, preconditioned using the modified incomplete Cholesky factorization with thresholding dropping.
-* run_findfish.m - Minimal working example.
-* showFish.m - Displays matching features found using detectfish.m
-* stabalize.m - Stabalizes two frames by matching SURF descriptors, estimating a projective transformation, and transforms the previous frame if the transformation matrix is not singular
+  - compareFeatureMatchingMethod_stabalization.m - Compare how keypoint and descriptor methods affect stabalization error
+  - compareKeypointMethod_fishDetection.m - Compare how keypoint method (with SURF descriptor) affects fish detection (number of matching keypoints and speed)
+  - compareLensCorrection_stabalization.m - Compare how lens correction affects stabalization error
+  - compareMasking_fishDetection.m - Compare how masking of keypoints affects fish detection
+  - compareMasking_transmissionMapRefining.m - Compare how refining the transmission map from dark channel prior using Levin's matting Laplacian affects accuracy of masking (NOTE THAT THIS FUNCTION NEEDS AT LEAST 8 GB OF FREE MEMORY TO RUN AND IS VERY SLOW)
+  - detectfish.m - Main function (see comments within)
+  - fetchFrameColor.m - Reads frame from video file and performs stabalization
+  - findFish_ModifiedSURF.m - Detects fish features using FAST keypoints and SURF descriptors. Uses thresholding of 5% for matching
+  - findMatch_ModifiedSURF.m - Detects features for frame stabalization using FAST keypoints and SURF descriptors. Uses default ratio rejection of 0.6 (max ratio between best and second best match).
+  - fish_cropped.jpg - Cropped image of an Indo-Pacific Sergeant (from http://www.whatsthatfish.com/image/view/3828) on black background
+  - genFish.m - Reads in fish image and creates mask (legacy reasons)
+  - lens_correct.m - Performs lens correction based on GoPro Hero 4 data (tweaked from unknown origin; lost reference when hard drive died)
+  - loadDetectionParameters.m - Loads various parameters for consistency between main detectfish.m file and auxillary comparison files
+  - mattingLaplacian.m - Generates Levin's matting Laplacian matrix
+  - removeHaze.m - Removes "haze" from being underwater using dark channel prior method (source in file); if specified, softens the estimated transmission map by solving Levin's matting Laplacian using conjugate gradient method, preconditioned using the modified incomplete Cholesky factorization with thresholding dropping.
+  - run_findfish.m - Minimal working example.
+  - showFish.m - Displays matching features found using detectfish.m
+  - stabalize.m - Stabalizes two frames by matching SURF descriptors, estimating a projective transformation, and transforms the previous frame if the transformation matrix is not singular
 
 Video files were kept in the video folder. Image folder holds results from running comparison scripts. Results folder contains results shown in paper (results can change due to RANSAC during feature matching and geometric transformation estimation).
 
